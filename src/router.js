@@ -1,15 +1,16 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { Routes, Route, Navigate } from 'react-router-dom';
 import FoodDeliveryApp from './App';
 import Login from './components/Login';
-import { jwtDecode } from 'jwt-decode'; // Importación corregida
+import { jwtDecode } from 'jwt-decode';
+import { fetchAllData } from './services/dataService';
 
-// Función para validar el token
+
 const isTokenValid = (token) => {
   if (!token) return false;
   try {
-    const decoded = jwtDecode(token); // Uso correcto de la función importada
-    const currentTime = Date.now() / 1000; // Tiempo actual en segundos
+    const decoded = jwtDecode(token);
+    const currentTime = Date.now() / 1000;
     return decoded.exp > currentTime;
   } catch (error) {
     console.error('Error decoding token:', error);
@@ -17,14 +18,21 @@ const isTokenValid = (token) => {
   }
 };
 
-// Componente para rutas protegidas
 const ProtectedRoute = ({ children }) => {
   const token = localStorage.getItem('token');
   return isTokenValid(token) ? children : <Navigate to="/" />;
 };
 
-// Componente del router principal
 const AppRouter = () => {
+  useEffect(() => {
+    fetchAllData()
+      .then((data) => {
+        console.log('Datos cargados:', data);
+      })
+      .catch((error) => {
+        console.error('Error al cargar los datos iniciales:', error);
+      });
+  }, []);
   return (
     <Routes>
       <Route
@@ -41,7 +49,7 @@ const AppRouter = () => {
           </ProtectedRoute>
         }
       />
-      {/* Puedes agregar más rutas protegidas aquí */}
+      {/* Más rutas protegidas aquí */}
       <Route path="*" element={<Navigate to="/" />} /> {/* Redirige rutas no definidas a "/" */}
     </Routes>
   );

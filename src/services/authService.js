@@ -9,7 +9,7 @@ export const login = async (telefono) => {
       const token = response.data.data.token;
       console.log('Token: ', token);
       localStorage.setItem('token', token);
-      return response.data;
+      return token;
     }
   } catch (error) {
     if (error.response && error.response.status === 404) {

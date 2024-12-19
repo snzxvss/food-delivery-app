@@ -1,39 +1,42 @@
+import React, { useEffect, useState } from 'react';
 import Navbar from './components/Navbar';
 import NavButton from './components/NavButton';
-import Card from './components/Card';
+import Categories from './components/Categories'; // Asegúrate de que esta ruta es correcta
+import ProductList from './components/ProductList'; // Importa ProductList
+import { fetchAllData } from './services/dataService';
 
 export default function FoodDeliveryApp() {
-  const categories = [
-    { name: 'Del Barrio', icon: '🏪' },
-    { name: 'Desayuno', icon: '🍳' },
-    { name: 'Colombiana', icon: '🇨🇴' },
-    { name: 'Postres', icon: '🍰' },
-    { name: 'Exprés', icon: '🚀' },
-  ];
+  const [categories, setCategories] = useState([]);
+  const [products, setProducts] = useState([]); // Agrega estado para productos
 
-  const products = [
-    {
-      name: 'Empanada Hawai',
-      originalPrice: 11000,
-      discountedPrice: 5500,
-      discount: '50% OFF',
-      image: '/placeholder.svg?height=200&width=200'
-    },
-    {
-      name: 'Vaquerito de Pechuga',
-      originalPrice: 28800,
-      discountedPrice: 11520,
-      discount: '60% OFF',
-      image: '/placeholder.svg?height=200&width=200'
-    },
-    {
-      name: '3 Buñuelos',
-      originalPrice: 11000,
-      discountedPrice: 5500,
-      discount: '50% OFF',
-      image: '/placeholder.svg?height=200&width=200'
-    },
-  ];
+  useEffect(() => {
+    const loadData = async () => {
+      try {
+        const data = await fetchAllData();
+
+        // Obtener categorías
+        const fetchedCategories = data.categorias.data.map(cat => ({
+          name: cat.nombre,
+          icon: `${process.env.REACT_APP_API_BACKEND}${cat.imagen}`,
+        }));
+        setCategories(fetchedCategories);
+
+        // Obtener ofertas y mapearlas a productos
+        const fetchedProducts = data.ofertas.data.map(offer => ({
+          name: offer.descripcion,
+          originalPrice: 10000, // Placeholder: Reemplaza con el precio original real si está disponible
+          discountedPrice: 10000 - (10000 * offer.descuento) / 100, // Calcula el precio descontado
+          discount: `${offer.descuento}% OFF`,
+          image: `${process.env.REACT_APP_API_BACKEND}${offer.foto_url}`,
+        }));
+        setProducts(fetchedProducts);
+      } catch (error) {
+        console.error('Error al cargar los datos:', error);
+      }
+    };
+
+    loadData();
+  }, []);
 
   return (
     <div className="min-h-screen bg-gray-50">
@@ -55,36 +58,12 @@ export default function FoodDeliveryApp() {
       </div>
       <div className="p-4">
         <div className="max-w-md mx-auto">
-          <div className="flex space-x-4 overflow-x-auto pb-4 scrollbar-hide">
-            {categories.map((category) => (
-              <div
-                key={category.name}
-                className="flex flex-col items-center space-y-2 flex-shrink-0"
-              >
-                <div className="w-16 h-16 bg-white rounded-full flex items-center justify-center shadow-sm">
-                  <span className="text-2xl">{category.icon}</span>
-                </div>
-                <span className="text-sm text-gray-600 whitespace-nowrap">
-                  {category.name}
-                </span>
-              </div>
-            ))}
-          </div>
+          <Categories categories={categories} /> {/* Utilizar Categories */}
         </div>
       </div>
-      <div className="p-4">
-        <div className="max-w-md mx-auto">
-          <h2 className="text-2xl font-bold mb-2">Come hasta por $22500</h2>
-          <p className="text-gray-500 mb-4">Platillos en súper precio</p>
-          <div className="flex space-x-4 overflow-x-auto pb-4 scrollbar-hide">
-            {products.map((product) => (
-              <Card key={product.name} product={product} />
-            ))}
-          </div>
-        </div>
-      </div>
+      <ProductList products={products} /> {/* Utilizar ProductList */}
       <NavButton />
-      <style jsx global>{`
+      <style>{`
         .scrollbar-hide::-webkit-scrollbar {
           display: none;
         }

@@ -1,3 +1,4 @@
+// src/components/Login.js
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
@@ -11,8 +12,8 @@ export default function Login() {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      await login(telefono); // El token ya se almacena en authService.js
-      navigate('/app');
+      await login(telefono);
+      navigate('/home'); // Navegar a '/home' en lugar de '/app'
     } catch (err) {
       setError(err.message);
     }
@@ -47,16 +48,18 @@ export default function Login() {
           Ingresar
         </motion.button>
       </motion.form>
-      <style jsx>{`
-         label {
-          display: block;
-          color: white;
-          text-align: center;
-          text-shadow: 1px 1px 2px #000, 2px 2px 4px ;
-          font-size: 1.5rem; /* Equivale a text-2xl */
-          margin-bottom: 1rem; /* Equivale a mb-4 */
-        }
-      `}</style>
+      <style>
+        {`
+          label {
+            display: block;
+            color: white;
+            text-align: center;
+            text-shadow: 1px 1px 2px #000, 2px 2px 4px;
+            font-size: 1.5rem;
+            margin-bottom: 1rem;
+          }
+        `}
+      </style>
     </div>
   );
 }
