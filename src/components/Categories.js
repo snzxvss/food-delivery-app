@@ -10,7 +10,7 @@ export default function Categories({ categories }) {
           className="flex flex-col items-center space-y-2 flex-shrink-0"
         >
           <div className="w-16 h-16 bg-white rounded-full flex items-center justify-center shadow-sm">
-            <img src={category.icon} alt={category.name} className="w-23 h-8" />
+            <img src={category.icon} alt={category.name} className="w-30 h-10" />
           </div>
           <span className="text-sm text-gray-600 whitespace-nowrap">
             {category.name}

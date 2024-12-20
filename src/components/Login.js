@@ -13,7 +13,8 @@ export default function Login() {
     e.preventDefault();
     try {
       await login(telefono);
-      navigate('/home'); // Navegar a '/home' en lugar de '/app'
+      console.log('Navegando a Home')
+      navigate('/home');
     } catch (err) {
       setError(err.message);
     }

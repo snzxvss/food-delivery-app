@@ -1,10 +1,13 @@
+// src/router.js
 import React, { useEffect } from 'react';
 import { Routes, Route, Navigate } from 'react-router-dom';
-import FoodDeliveryApp from './App';
+import Home from './pages/Home';
+import CategoriesPage from './pages/Categories';
+import OrdersPage from './pages/Orders';
+import FoodDetail from './pages/FoodDetail'; // Importar FoodDetail
 import Login from './components/Login';
 import { jwtDecode } from 'jwt-decode';
 import { fetchAllData } from './services/dataService';
-
 
 const isTokenValid = (token) => {
   if (!token) return false;
@@ -33,19 +36,45 @@ const AppRouter = () => {
         console.error('Error al cargar los datos iniciales:', error);
       });
   }, []);
+
   return (
     <Routes>
       <Route
         path="/"
         element={
-          isTokenValid(localStorage.getItem('token')) ? <Navigate to="/app" /> : <Login />
+          isTokenValid(localStorage.getItem('token')) ? <Navigate to="/home" /> : <Login />
         }
       />
       <Route
-        path="/app"
+        path="/home"
         element={
           <ProtectedRoute>
-            <FoodDeliveryApp />
+            <Home />
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/categories"
+        element={
+          <ProtectedRoute>
+            <CategoriesPage />
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/orders"
+        element={
+          <ProtectedRoute>
+            <OrdersPage />
+          </ProtectedRoute>
+        }
+      />
+      {/* Nueva Ruta para FoodDetail */}
+      <Route
+        path="/food/:id"
+        element={
+          <ProtectedRoute>
+            <FoodDetail />
           </ProtectedRoute>
         }
       />
